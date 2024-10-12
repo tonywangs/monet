@@ -32,21 +32,15 @@ async def send_data_to_backend(audio_data, file_data):
         file_base64 = base64.b64encode(file_data).decode('utf-8')
         
         # Prepare JSON payload
-        payload1 = {
+        payload = {
             # "audio_data": audio_base64,
             # "file_data": file_base64
             "event": "audio", 
             "payload": audio_base64
         }
-
-        payload2 = {
-            "event": "file", 
-            "payload": file_base64 
-        }
         
         # Send data to backend
-        await websocket.send(json.dumps(payload1))
-        await websocket.send(json.dumps(payload2))
+        await websocket.send(json.dumps(payload))
         
         # Wait for response
         response = await websocket.recv()
