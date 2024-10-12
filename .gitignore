@@ -1,2 +1,6 @@
 #ignore personal crede
 serviceaccount.json
+#ignoru personal crede
+serviceaccount.json
+credentials.json
+token.json
