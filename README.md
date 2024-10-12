@@ -1,1 +1,1 @@
-# pear-hamilton
+# hamilton
