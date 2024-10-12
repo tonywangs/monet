@@ -114,7 +114,58 @@ def create_textbox_with_text(presentation_id, page_id, unique_elementID, texthei
 
  return response
 
-
+def reposition_element(presentation_id, page_id, element_id, textheight, textwidth, xpos, ypos, text_string):
+  creds, _ = google.auth.default()
+ # pylint: disable=maybe-no-member
+  try:
+    service = build("slides", "v1", credentials=creds)
+    # Create a new square textbox, using the supplied element ID.
+    element_id = unique_elementID
+    heightpt = {"magnitude": textheight, "unit": "PT"}
+    widthpt = {"magnitude": textwidth, "unit": "PT"}
+    # Create a request to update the element's position
+    requests = [
+          {
+              'updatePageElementTransform': {
+                  'objectId': element_id,
+                  'transform': {
+                      'scaleX': 1,
+                      'scaleY': 1,
+                      'translateX': x,
+                      'translateY': y,
+                      'unit': 'PT'
+                  },
+                  'applyMode': 'RELATIVE'
+              }
+          }
+      ]
+      
+      # Optionally resize the element
+    if width and height:
+          requests.append({
+              'updatePageElementProperties': {
+                  'objectId': element_id,
+                  'pageElementProperties': {
+                      'size': {
+                          'height': {'magnitude': height, 'unit': 'PT'},
+                          'width': {'magnitude': width, 'unit': 'PT'}
+                      }
+                  },
+                  'fields': 'size'
+              }
+          })
+    body = {"requests": requests}
+    response = (
+          service.presentations()
+          .batchUpdate(presentationId=presentation_id, body=body)
+          .execute()
+    )
+    create_shape_response = response.get("replies")[0].get("reposition")
+    print(f"reposition:{(create_shape_response.get('objectId'))}")
+  except HttpError as error:
+    print(f"An error occurred: {error}")
+      
+    return response
 
 #same as above but puts text in a shape that is not a textbox.
 #need to give shape input from given list of shapes
@@ -180,6 +231,291 @@ def create_shape_with_text(presentation_id, page_id, unique_elementID, textheigh
 
  return response
 
+def create_ellipse_with_text(presentation_id, page_id, unique_elementID, textheight, textwidth, xpos, ypos, text_string):
+ """
+ Creates the textbox with text, the user has access to.
+ Load pre-authorized user credentials from the environment.
+ TODO(developer) - See https://developers.google.com/identity
+ for guides on implementing OAuth2 for the application.
+ """
+ shape = "ELLIPSE"
+ creds, _ = google.auth.default()
+ # pylint: disable=maybe-no-member
+ try:
+   service = build("slides", "v1", credentials=creds)
+   # Create a new square textbox, using the supplied element ID.
+   element_id = unique_elementID
+   heightpt = {"magnitude": textheight, "unit": "PT"}
+   widthpt = {"magnitude": textwidth, "unit": "PT"}
+   requests = [
+       {
+           "createShape": {
+               "objectId": element_id,
+               "shapeType": shape,
+               "elementProperties": {
+                   "pageObjectId": page_id,
+                   "size": {"height": heightpt, "width": widthpt},
+                   "transform": {
+                       "scaleX": 1,
+                       "scaleY": 1,
+                       "translateX": xpos,
+                       "translateY": ypos,
+                       "unit": "PT",
+                   },
+               },
+           }
+       },
+       # Insert text into the box, using the supplied element ID.
+       {
+           "insertText": {
+               "objectId": element_id,
+               "insertionIndex": 0,
+               "text": text_string,
+           }
+       },
+   ]
+
+
+   # Execute the request.
+   body = {"requests": requests}
+   response = (
+       service.presentations()
+       .batchUpdate(presentationId=presentation_id, body=body)
+       .execute()
+   )
+   create_shape_response = response.get("replies")[0].get("createshapewithtext")
+   print(f"Created textbox with ID:{(create_shape_response.get('objectId'))}")
+ except HttpError as error:
+   print(f"An error occurred: {error}")
+
+
+   return error
+
+
+ return response
+
+def create_cloud_with_text(presentation_id, page_id, unique_elementID, textheight, textwidth, xpos, ypos, text_string):
+ """
+ Creates the textbox with text, the user has access to.
+ Load pre-authorized user credentials from the environment.
+ TODO(developer) - See https://developers.google.com/identity
+ for guides on implementing OAuth2 for the application.
+ """
+ shape = "CLOUD"
+ creds, _ = google.auth.default()
+ # pylint: disable=maybe-no-member
+ try:
+   service = build("slides", "v1", credentials=creds)
+   # Create a new square textbox, using the supplied element ID.
+   element_id = unique_elementID
+   heightpt = {"magnitude": textheight, "unit": "PT"}
+   widthpt = {"magnitude": textwidth, "unit": "PT"}
+   requests = [
+       {
+           "createShape": {
+               "objectId": element_id,
+               "shapeType": shape,
+               "elementProperties": {
+                   "pageObjectId": page_id,
+                   "size": {"height": heightpt, "width": widthpt},
+                   "transform": {
+                       "scaleX": 1,
+                       "scaleY": 1,
+                       "translateX": xpos,
+                       "translateY": ypos,
+                       "unit": "PT",
+                   },
+               },
+           }
+       },
+       # Insert text into the box, using the supplied element ID.
+       {
+           "insertText": {
+               "objectId": element_id,
+               "insertionIndex": 0,
+               "text": text_string,
+           }
+       },
+   ]
+
+
+   # Execute the request.
+   body = {"requests": requests}
+   response = (
+       service.presentations()
+       .batchUpdate(presentationId=presentation_id, body=body)
+       .execute()
+   )
+   create_shape_response = response.get("replies")[0].get("createshapewithtext")
+   print(f"Created textbox with ID:{(create_shape_response.get('objectId'))}")
+ except HttpError as error:
+   print(f"An error occurred: {error}")
+
+
+   return error
+
+
+ return response
+
+def create_rectangle_without_text(presentation_id, page_id, unique_elementID, shapeheight, shapewidth, xpos, ypos):
+ """
+ Creates the textbox with text, the user has access to.
+ Load pre-authorized user credentials from the environment.
+ TODO(developer) - See https://developers.google.com/identity
+ for guides on implementing OAuth2 for the application.
+ """
+ shape = "RECTANGLE"
+ creds, _ = google.auth.default()
+ # pylint: disable=maybe-no-member
+ try:
+   service = build("slides", "v1", credentials=creds)
+   # Create a new square textbox, using the supplied element ID.
+   element_id = unique_elementID
+   heightpt = {"magnitude": shapeheight, "unit": "PT"}
+   widthpt = {"magnitude": shapewidth, "unit": "PT"}
+   requests = [
+       {
+           "createShape": {
+               "objectId": element_id,
+               "shapeType": shape,
+               "elementProperties": {
+                   "pageObjectId": page_id,
+                   "size": {"height": heightpt, "width": widthpt},
+                   "transform": {
+                       "scaleX": 1,
+                       "scaleY": 1,
+                       "translateX": xpos,
+                       "translateY": ypos,
+                       "unit": "PT",
+                   },
+               },
+           }
+       }
+   ]
+   # Execute the request.
+   body = {"requests": requests}
+   response = (
+       service.presentations()
+       .batchUpdate(presentationId=presentation_id, body=body)
+       .execute()
+   )
+   create_shape_response = response.get("replies")[0].get("createShapewithouttext")
+   print(f"Created textbox with ID:{(create_shape_response.get('objectId'))}")
+ except HttpError as error:
+   print(f"An error occurred: {error}")
+
+
+   return error
+
+
+ return response
+
+def create_ellipse_without_text(presentation_id, page_id, unique_elementID, shapeheight, shapewidth, xpos, ypos):
+ """
+ Creates the textbox with text, the user has access to.
+ Load pre-authorized user credentials from the environment.
+ TODO(developer) - See https://developers.google.com/identity
+ for guides on implementing OAuth2 for the application.
+ """
+ shape = "ELLIPSE"
+ creds, _ = google.auth.default()
+ # pylint: disable=maybe-no-member
+ try:
+   service = build("slides", "v1", credentials=creds)
+   # Create a new square textbox, using the supplied element ID.
+   element_id = unique_elementID
+   heightpt = {"magnitude": shapeheight, "unit": "PT"}
+   widthpt = {"magnitude": shapewidth, "unit": "PT"}
+   requests = [
+       {
+           "createShape": {
+               "objectId": element_id,
+               "shapeType": shape,
+               "elementProperties": {
+                   "pageObjectId": page_id,
+                   "size": {"height": heightpt, "width": widthpt},
+                   "transform": {
+                       "scaleX": 1,
+                       "scaleY": 1,
+                       "translateX": xpos,
+                       "translateY": ypos,
+                       "unit": "PT",
+                   },
+               },
+           }
+       }
+   ]
+   # Execute the request.
+   body = {"requests": requests}
+   response = (
+       service.presentations()
+       .batchUpdate(presentationId=presentation_id, body=body)
+       .execute()
+   )
+   create_shape_response = response.get("replies")[0].get("createShapewithouttext")
+   print(f"Created textbox with ID:{(create_shape_response.get('objectId'))}")
+ except HttpError as error:
+   print(f"An error occurred: {error}")
+
+
+   return error
+
+
+ return response
+
+
+def create_cloud_without_text(presentation_id, page_id, unique_elementID, shapeheight, shapewidth, xpos, ypos):
+ """
+ Creates the textbox with text, the user has access to.
+ Load pre-authorized user credentials from the environment.
+ TODO(developer) - See https://developers.google.com/identity
+ for guides on implementing OAuth2 for the application.
+ """
+ shape = "CLOUD"
+ creds, _ = google.auth.default()
+ # pylint: disable=maybe-no-member
+ try:
+   service = build("slides", "v1", credentials=creds)
+   # Create a new square textbox, using the supplied element ID.
+   element_id = unique_elementID
+   heightpt = {"magnitude": shapeheight, "unit": "PT"}
+   widthpt = {"magnitude": shapewidth, "unit": "PT"}
+   requests = [
+       {
+           "createShape": {
+               "objectId": element_id,
+               "shapeType": shape,
+               "elementProperties": {
+                   "pageObjectId": page_id,
+                   "size": {"height": heightpt, "width": widthpt},
+                   "transform": {
+                       "scaleX": 1,
+                       "scaleY": 1,
+                       "translateX": xpos,
+                       "translateY": ypos,
+                       "unit": "PT",
+                   },
+               },
+           }
+       }
+   ]
+   # Execute the request.
+   body = {"requests": requests}
+   response = (
+       service.presentations()
+       .batchUpdate(presentationId=presentation_id, body=body)
+       .execute()
+   )
+   create_shape_response = response.get("replies")[0].get("createShapewithouttext")
+   print(f"Created textbox with ID:{(create_shape_response.get('objectId'))}")
+ except HttpError as error:
+   print(f"An error occurred: {error}")
+
+
+   return error
+
+
+ return response
 
 #empty shape without text
 def create_shape_without_text(presentation_id, page_id, unique_elementID, shapeheight, shapewidth, xpos, ypos, shape):
