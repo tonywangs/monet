@@ -9,8 +9,11 @@ credentials = Credentials.from_service_account_info(service_account_info, scopes
 
 drive_service = build('drive', 'v3', credentials=credentials)
 
+presentation_id = # add presentation id
+page_id = # add page id
+
 # this should be default ran at the start of opening the app
-def create_slide(presentation_id, page_id):
+def create_slide():
   """
   Creates the Presentation the user has access to.
   Load pre-authorized user credentials from the environment.
@@ -55,7 +58,7 @@ def create_slide(presentation_id, page_id):
   return response
 
 
-def create_textbox_with_text(presentation_id, page_id, unique_elementID, textheight, textwidth, xpos, ypos, text_string):
+def create_textbox_with_text(unique_elementID, textheight, textwidth, xpos, ypos, text_string):
  """
  Creates the textbox with text, the user has access to.
  Load pre-authorized user credentials from the environment.
@@ -114,13 +117,13 @@ def create_textbox_with_text(presentation_id, page_id, unique_elementID, texthei
 
  return response
 
-def reposition_element(presentation_id, page_id, element_id, textheight, textwidth, xpos, ypos, text_string):
+def reposition_element(element_id, textheight, textwidth, xpos, ypos, text_string):
   creds, _ = google.auth.default()
  # pylint: disable=maybe-no-member
   try:
     service = build("slides", "v1", credentials=creds)
     # Create a new square textbox, using the supplied element ID.
-    element_id = unique_elementID
+    element_id = element_id
     heightpt = {"magnitude": textheight, "unit": "PT"}
     widthpt = {"magnitude": textwidth, "unit": "PT"}
     # Create a request to update the element's position
@@ -169,7 +172,7 @@ def reposition_element(presentation_id, page_id, element_id, textheight, textwid
 
 #same as above but puts text in a shape that is not a textbox.
 #need to give shape input from given list of shapes
-def create_shape_with_text(presentation_id, page_id, unique_elementID, textheight, textwidth, xpos, ypos, text_string, shape):
+def create_shape_with_text(unique_elementID, textheight, textwidth, xpos, ypos, text_string, shape):
  """
  Creates the textbox with text, the user has access to.
  Load pre-authorized user credentials from the environment.
@@ -231,7 +234,7 @@ def create_shape_with_text(presentation_id, page_id, unique_elementID, textheigh
 
  return response
 
-def create_ellipse_with_text(presentation_id, page_id, unique_elementID, textheight, textwidth, xpos, ypos, text_string):
+def create_ellipse_with_text(unique_elementID, textheight, textwidth, xpos, ypos, text_string):
  """
  Creates the textbox with text, the user has access to.
  Load pre-authorized user credentials from the environment.
@@ -294,7 +297,7 @@ def create_ellipse_with_text(presentation_id, page_id, unique_elementID, texthei
 
  return response
 
-def create_cloud_with_text(presentation_id, page_id, unique_elementID, textheight, textwidth, xpos, ypos, text_string):
+def create_cloud_with_text(unique_elementID, textheight, textwidth, xpos, ypos, text_string):
  """
  Creates the textbox with text, the user has access to.
  Load pre-authorized user credentials from the environment.
@@ -357,7 +360,7 @@ def create_cloud_with_text(presentation_id, page_id, unique_elementID, textheigh
 
  return response
 
-def create_rectangle_without_text(presentation_id, page_id, unique_elementID, shapeheight, shapewidth, xpos, ypos):
+def create_rectangle_without_text(unique_elementID, shapeheight, shapewidth, xpos, ypos):
  """
  Creates the textbox with text, the user has access to.
  Load pre-authorized user credentials from the environment.
@@ -410,7 +413,7 @@ def create_rectangle_without_text(presentation_id, page_id, unique_elementID, sh
 
  return response
 
-def create_ellipse_without_text(presentation_id, page_id, unique_elementID, shapeheight, shapewidth, xpos, ypos):
+def create_ellipse_without_text(unique_elementID, shapeheight, shapewidth, xpos, ypos):
  """
  Creates the textbox with text, the user has access to.
  Load pre-authorized user credentials from the environment.
@@ -464,7 +467,7 @@ def create_ellipse_without_text(presentation_id, page_id, unique_elementID, shap
  return response
 
 
-def create_cloud_without_text(presentation_id, page_id, unique_elementID, shapeheight, shapewidth, xpos, ypos):
+def create_cloud_without_text(unique_elementID, shapeheight, shapewidth, xpos, ypos):
  """
  Creates the textbox with text, the user has access to.
  Load pre-authorized user credentials from the environment.
@@ -518,7 +521,7 @@ def create_cloud_without_text(presentation_id, page_id, unique_elementID, shapeh
  return response
 
 #empty shape without text
-def create_shape_without_text(presentation_id, page_id, unique_elementID, shapeheight, shapewidth, xpos, ypos, shape):
+def create_shape_without_text(unique_elementID, shapeheight, shapewidth, xpos, ypos, shape):
  """
  Creates the textbox with text, the user has access to.
  Load pre-authorized user credentials from the environment.
@@ -573,7 +576,7 @@ def create_shape_without_text(presentation_id, page_id, unique_elementID, shapeh
 
 
 
-def create_image(presentation_id, page_id,imheight, imwidth, img_url, xpos, ypos):
+def create_image(imheight, imwidth, img_url, xpos, ypos):
  """
  Creates images the user has access to.
  Load pre-authorized user credentials from the environment.
@@ -637,5 +640,6 @@ def create_image(presentation_id, page_id,imheight, imwidth, img_url, xpos, ypos
 if __name__ == "__main__":
   # Put the presentation_id, Page_id of slides whose list needs
   # to be submitted.
-  create_slide("1iVqqVFXShE2FNs3V4WLWLcnEWm6TpluZJIwwNPFyrxE", "My4ndpage")
+
+  create_slide()
 
