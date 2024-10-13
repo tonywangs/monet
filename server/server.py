@@ -8,7 +8,12 @@ import websockets
 import asyncio
 import soundfile as sf
 
+from function_calls import call_openai_function
+
 import websocket
+
+import torch
+import torchaudio
 
 import numpy as np
 
@@ -79,7 +84,12 @@ def transcribe_audio(audio):
             file=audio,
             response_format="text"
             )
-    print(transcription)
+
+    try:
+        call_openai_function(transcription)
+    except Exception as e:
+        print(e)
+
 
 async def handle_audio(audio):
     print(audio.shape)
@@ -107,17 +117,33 @@ async def handle_event(websocket):
         print(message["event"])
 
         if message["event"] == "audio":
-            send_oai_audio(message["payload"])
-            audio = parse_audio(message["payload"])
-            audio_file = buffer_audio(audio)
-            transcribe_audio(audio_file)
-            await handle_audio(audio)
+            # audio_44khz = parse_audio(message["payload"])
+            # sf.write("temp.wav", audio_44khz, 48000)
+            # break
+            # audio_44khz = torch.tensor(audio_44khz)
+            # print(audio_44khz.shape)
+            # audio = torchaudio.functional.resample(audio_44khz, 41000, 16000)
+            # print(audio.shape)
+            # audio = audio.numpy()
+            # print(audio.shape)
+            # audio_base64 = base64.b64encode(audio.numpy()).decode("utf-8")
+
+
+            # send_oai_audio(audio_base64)
+
+            audio = parse_file(message["payload"])
+            with open("audio.wav", "wb") as audio_file:
+                audio_file.write(audio)
+
+            with open("audio.wav", "rb") as audio_file:
+                transcribe_audio(audio_file)
+
         elif message["event"] == "file":
             file = parse_file(message["payload"])
             logo = open("logo.jpg", "wb")
             logo.write(file)
 
-        await websocket.send("received")
+        # await websocket.send("received")
 
 async def serve():
     async with websockets.serve(

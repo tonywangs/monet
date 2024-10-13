@@ -587,7 +587,7 @@ def create_shape_without_text(
     return response
 
 
-def create_image(imheight, imwidth, img_url, xpos, ypos):
+def create_image(imheight, imwidth, xpos, ypos):
     """
     Creates images the user has access to.
     Load pre-authorized user credentials from the environment.
@@ -595,7 +595,12 @@ def create_image(imheight, imwidth, img_url, xpos, ypos):
     for guides on implementing OAuth2 for the application.
     """
 
+    imheight *= 10000
+    imwidth *= 10000
+
     creds = Credentials.from_authorized_user_file("token.json", SCOPES)
+
+    img_url = "https://pear-monet.s3.us-east-1.amazonaws.com/Pear_VC_logo.png?response-content-disposition=inline&X-Amz-Security-Token=IQoJb3JpZ2luX2VjEFgaCXVzLWVhc3QtMSJHMEUCIQCw%2BxSAdfzgyJrKetCh48D1WIewvhS1AjrKjjo%2Br1%2F2LwIgBnQYjvbal85vabXpwWIRvgRZUlbxKfMvK3qBocgWThYqhAMIsP%2F%2F%2F%2F%2F%2F%2F%2F%2F%2FARADGgw5Njc5NDcxMzQzODkiDMRy%2FuLL6WychkJfMyrYAjfsttbQDFyC8aAZBBS1qinUr4btBqj4VbMgwQt42ZFedI6qwSwwVZZaBGyTXeXqmyL%2FC2YKGwW1k5llB%2FFmINcsfxJ1%2FHdglH4axZTBO0F7%2BiHcNla3t1Oo%2F2pRlEUnOiCCowk9CpqRqRQwRGZq5lMh08K9lUmPRlILEdD5%2F4ZiiYOQkLHuWdsVuXKlVTIUJjG%2BsgMOhRpQjL%2BLvOYFtSgPXvZEJb8BNRK0l5leGU0WSOdo9v7Lbj2m0mQQbHe3Ixjn1fo6dxYMwS6R58vYFTpafBbbmQYIr6sJiBjR6tfHOZKjE5qPaT69OOWU3zt3vEvnCR0KXqEmBieMWdPvpJVku1xu130MLSHqanv2Sva38dCe9ssrQm3mGxctj4ERtVK5s3UuSeI%2BBnbOAbXFRsU9wg8VY1yuL5XO5DdUpJXbxtXB9p%2BSmCWQ6%2FIYq4YfcJXqdkd8ndHPMLOBrLgGOrMCZMQ2%2BGg5kE7oFCOH4mcBBkZhmS%2FMkPa1X0WyuEmBtqCqfhghbnbVFjezrlTEV6SzpVELvgM7PQS0Yg3bEAsNaSEqO46gjagGTzIHPLK%2B3kHAgP1vN6kznaIBThrKCPQD14WTEqnOkRRClR2umesbbQqU3pyzwHD3fiMEvOKDWuvMRg3T7GZar9RyqmHqXE1TBV2fwdcyX7gzvxSJRq1DDgUUodBYAcuj5g%2FgAPPnH0EkMnPhhdv9nmZVIlvZrDb8glD8LV%2FCIbKgHDklaAAjlg1El83e6pOgbdZ2Ti7nkq8eZAxrlBkjZMp%2FVs%2FBYeVs3oUanNSOfn93XfOgr7e3vWku4Yc2TGWq8I7xpPLC9bJJW3nM7LliitzABZWWiV9eUju6Yl6dnZaTpwxgkJmo24edlA%3D%3D&X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Date=20241012T233020Z&X-Amz-SignedHeaders=host&X-Amz-Expires=43199&X-Amz-Credential=ASIA6CXRFEW2VV4NPUCT%2F20241012%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Signature=ecbdb2801f0de6e14b12efffe83d2680c973981f26720bccece93461eae5bc1f"
     # pylint: disable=maybe-no-member
     try:
         service = build("slides", "v1", credentials=creds)
@@ -619,7 +624,7 @@ def create_image(imheight, imwidth, img_url, xpos, ypos):
                             "scaleY": 1,
                             "translateX": xpos,
                             "translateY": ypos,
-                            "unit": "EMU",
+                            "unit": "PT",
                         },
                     },
                 }
@@ -651,5 +656,5 @@ if __name__ == "__main__":
     # reposition_element("12345", -400, 100, 50, 50, "okay changin")
     # create_ellipse_with_text("23445", 100, 100, 100, 100, "testing color")
 
-    create_image(1000000, 1000000, "https://pear-monet.s3.us-east-1.amazonaws.com/Pear_VC_logo.png?response-content-disposition=inline&X-Amz-Security-Token=IQoJb3JpZ2luX2VjEFgaCXVzLWVhc3QtMSJHMEUCIQCw%2BxSAdfzgyJrKetCh48D1WIewvhS1AjrKjjo%2Br1%2F2LwIgBnQYjvbal85vabXpwWIRvgRZUlbxKfMvK3qBocgWThYqhAMIsP%2F%2F%2F%2F%2F%2F%2F%2F%2F%2FARADGgw5Njc5NDcxMzQzODkiDMRy%2FuLL6WychkJfMyrYAjfsttbQDFyC8aAZBBS1qinUr4btBqj4VbMgwQt42ZFedI6qwSwwVZZaBGyTXeXqmyL%2FC2YKGwW1k5llB%2FFmINcsfxJ1%2FHdglH4axZTBO0F7%2BiHcNla3t1Oo%2F2pRlEUnOiCCowk9CpqRqRQwRGZq5lMh08K9lUmPRlILEdD5%2F4ZiiYOQkLHuWdsVuXKlVTIUJjG%2BsgMOhRpQjL%2BLvOYFtSgPXvZEJb8BNRK0l5leGU0WSOdo9v7Lbj2m0mQQbHe3Ixjn1fo6dxYMwS6R58vYFTpafBbbmQYIr6sJiBjR6tfHOZKjE5qPaT69OOWU3zt3vEvnCR0KXqEmBieMWdPvpJVku1xu130MLSHqanv2Sva38dCe9ssrQm3mGxctj4ERtVK5s3UuSeI%2BBnbOAbXFRsU9wg8VY1yuL5XO5DdUpJXbxtXB9p%2BSmCWQ6%2FIYq4YfcJXqdkd8ndHPMLOBrLgGOrMCZMQ2%2BGg5kE7oFCOH4mcBBkZhmS%2FMkPa1X0WyuEmBtqCqfhghbnbVFjezrlTEV6SzpVELvgM7PQS0Yg3bEAsNaSEqO46gjagGTzIHPLK%2B3kHAgP1vN6kznaIBThrKCPQD14WTEqnOkRRClR2umesbbQqU3pyzwHD3fiMEvOKDWuvMRg3T7GZar9RyqmHqXE1TBV2fwdcyX7gzvxSJRq1DDgUUodBYAcuj5g%2FgAPPnH0EkMnPhhdv9nmZVIlvZrDb8glD8LV%2FCIbKgHDklaAAjlg1El83e6pOgbdZ2Ti7nkq8eZAxrlBkjZMp%2FVs%2FBYeVs3oUanNSOfn93XfOgr7e3vWku4Yc2TGWq8I7xpPLC9bJJW3nM7LliitzABZWWiV9eUju6Yl6dnZaTpwxgkJmo24edlA%3D%3D&X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Date=20241012T233020Z&X-Amz-SignedHeaders=host&X-Amz-Expires=43199&X-Amz-Credential=ASIA6CXRFEW2VV4NPUCT%2F20241012%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Signature=ecbdb2801f0de6e14b12efffe83d2680c973981f26720bccece93461eae5bc1f", 50, 50)
+    create_image(1000000, 1000000, "", 50, 50)
 

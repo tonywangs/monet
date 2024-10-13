@@ -1,9 +1,13 @@
 from openai import OpenAI
 import os
 
+from slides_functions import *
+
 # Initialize the OpenAI client
 client = OpenAI(api_key=os.environ["OPENAI_API_KEY"])
 print("API key set")
+
+
 
 # # Define the functions to be called
 # def create_textbox_with_text(unique_elementID, textheight, textwidth, xpos, ypos, text_string):
@@ -45,7 +49,7 @@ functions = [
                 "ypos": {"type": "integer"},
                 "text_string": {"type": "string"}
             },
-            "required": ["presentation_id", "page_id", "unique_elementID", "textheight", "textwidth", "xpos", "ypos", "text_string"]
+            "required": ["unique_elementID", "textheight", "textwidth", "xpos", "ypos", "text_string"]
         }
     },
     {
@@ -61,7 +65,7 @@ functions = [
                 "ypos": {"type": "integer"},
                 "text_string": {"type": "string"}
             },
-            "required": ["presentation_id", "page_id", "element_id", "textheight", "textwidth", "xpos", "ypos", "text_string"]
+            "required": ["element_id", "textheight", "textwidth", "xpos", "ypos", "text_string"]
         }
     },
     {
@@ -77,7 +81,7 @@ functions = [
                 "ypos": {"type": "integer"},
                 "text_string": {"type": "string"}
             },
-            "required": ["presentation_id", "page_id", "unique_elementID", "textheight", "textwidth", "xpos", "ypos", "text_string"]
+            "required": ["unique_elementID", "textheight", "textwidth", "xpos", "ypos", "text_string"]
         }
     },
     {
@@ -93,7 +97,7 @@ functions = [
                 "ypos": {"type": "integer"},
                 "text_string": {"type": "string"}
             },
-            "required": ["presentation_id", "page_id", "unique_elementID", "textheight", "textwidth", "xpos", "ypos", "text_string"]
+            "required": ["unique_elementID", "textheight", "textwidth", "xpos", "ypos", "text_string"]
         }
     },
     {
@@ -108,7 +112,7 @@ functions = [
                 "xpos": {"type": "integer"},
                 "ypos": {"type": "integer"}
             },
-            "required": ["presentation_id", "page_id", "unique_elementID", "shapeheight", "shapewidth", "xpos", "ypos"]
+            "required": ["unique_elementID", "shapeheight", "shapewidth", "xpos", "ypos"]
         }
     },
     {
@@ -123,13 +127,74 @@ functions = [
                 "xpos": {"type": "integer"},
                 "ypos": {"type": "integer"}
             },
-            "required": ["presentation_id", "page_id", "unique_elementID", "shapeheight", "shapewidth", "xpos", "ypos"]
+            "required": ["unique_elementID", "shapeheight", "shapewidth", "xpos", "ypos"]
         }
+    },
+    {
+            "name": "create_image",
+            "description": "Create the Pear VC logo image",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "imheight": {"type": "integer"},
+                    "imwidth": {"type": "integer"},
+                    "xpos": {"type": "integer"},
+                    "ypos": {"type": "integer"}
+                },
+            },
+            "required": ["imheight", "imwidth", "xpos", "ypos"]
     }
 ]
+# Use alphanumeric keys (e.g., "A", "B", "C", etc.) for each instruction.
 
 def call_openai_function(prompt):
+    # prompt = "The dimensions of the slide are 600 x pixels and 300 y pixels. " + prompt
+
+    dimension_prompt = "The dimensions of the slide are 400 x pixels and 200 y pixels."
+
+    meta_prompt = """You have been provided with a long block of transcripted text that contains multiple instructions to edit graphics. Your task is to break this long block into a series of simple, one-line instructions, each corresponding to a single action.
+Output the result as a series of sentences, each starting with a new line.
+Ensure each line is a distinct and manageable action.
+Note that the dimensions of the slide are 400 x pixels and 200 y pixels.
+
+Input: Add a text box with the text Welcome to PearHacks x OpenAI in the center and add a cloud which says Happy to be here
+
+Expected output:
+
+Add a text box with the text 'Welcome to PearHacks x OpenAI' in the center
+Add a cloud which says 'Happy to be here'
+
+Here is the prompt that you are processing:
+
+""" + prompt
+    
     print(f"Calling OpenAI function with prompt: {prompt}")
+
+    response = client.chat.completions.create(
+            model="gpt-4o-mini",
+            messages=[
+                {"role": "system", "content": "You are a helpful assistant that helps create Google Slides."},
+                {"role": "user",
+                 "content": meta_prompt }
+                ]
+            )
+    print("Received response from OpenAI")
+
+    print(response)
+
+    try:
+        newline_response = response.choices[0].message.content
+
+        newline_response = newline_response.split("\n")
+
+        for i in range(len(newline_response)):
+            print(f"Prompt {i+1}: {newline_response[i]}")
+            call_prompt(newline_response[i])
+    except Exception as e:
+        print(f"An error occurred: {e}")
+
+
+def call_prompt(prompt):
     response = client.chat.completions.create(
         model="gpt-4o-mini", 
         messages=[
@@ -166,16 +231,18 @@ def call_openai_function(prompt):
             create_ellipse_without_text(**args)
         elif function_name == "create_cloud_without_text":
             create_cloud_without_text(**args)
+        elif function_name == "create_image":
+            create_image(**args)
         else:
             print("No function call in the response")
             print("Response content:", message.content)
 
-# Example prompt that the user could provide
-user_prompt = "Create a rectangle shape with text 'Welcome to the presentation' on the first page of the presentation."
-
-try:
-    call_openai_function(user_prompt)
-except Exception as e:
-    print(f"An error occurred: {e}")
-
-print("Script finished")
+# # Example prompt that the user could provide
+# user_prompt = "Create a rectangle shape with text 'Welcome to the presentation' on the first page of the presentation."
+# 
+# try:
+#     call_openai_function(user_prompt)
+# except Exception as e:
+#     print(f"An error occurred: {e}")
+# 
+# print("Script finished")
